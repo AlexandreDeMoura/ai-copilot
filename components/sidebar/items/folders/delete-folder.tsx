@@ -99,43 +99,53 @@ export const DeleteFolder: FC<DeleteFolderProps> = ({
     handleDeleteFolderOnly()
   }
 
+  // Add this check to determine if the folder is deletable
+  const isDeletable = folder.name !== "Favorite"
+
   return (
-    <Dialog open={showFolderDialog} onOpenChange={setShowFolderDialog}>
-      <DialogTrigger asChild>
-        <IconTrash className="hover:opacity-50" size={18} />
-      </DialogTrigger>
+    <>
+      {isDeletable && (
+        <Dialog open={showFolderDialog} onOpenChange={setShowFolderDialog}>
+          <DialogTrigger asChild>
+            <IconTrash className="hover:opacity-50" size={18} />
+          </DialogTrigger>
 
-      <DialogContent className="min-w-[550px]">
-        <DialogHeader>
-          <DialogTitle>Delete {folder.name}</DialogTitle>
+          <DialogContent className="min-w-[550px]">
+            <DialogHeader>
+              <DialogTitle>Delete {folder.name}</DialogTitle>
 
-          <DialogDescription>
-            Are you sure you want to delete this folder?
-          </DialogDescription>
-        </DialogHeader>
+              <DialogDescription>
+                Are you sure you want to delete this folder?
+              </DialogDescription>
+            </DialogHeader>
 
-        <DialogFooter>
-          <Button variant="ghost" onClick={() => setShowFolderDialog(false)}>
-            Cancel
-          </Button>
+            <DialogFooter>
+              <Button
+                variant="ghost"
+                onClick={() => setShowFolderDialog(false)}
+              >
+                Cancel
+              </Button>
 
-          <Button
-            ref={buttonRef}
-            variant="destructive"
-            onClick={handleDeleteFolderAndItems}
-          >
-            Delete Folder & Included Items
-          </Button>
+              <Button
+                ref={buttonRef}
+                variant="destructive"
+                onClick={handleDeleteFolderAndItems}
+              >
+                Delete Folder & Included Items
+              </Button>
 
-          <Button
-            ref={buttonRef}
-            variant="destructive"
-            onClick={handleDeleteFolderOnly}
-          >
-            Delete Folder Only
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+              <Button
+                ref={buttonRef}
+                variant="destructive"
+                onClick={handleDeleteFolderOnly}
+              >
+                Delete Folder Only
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   )
 }

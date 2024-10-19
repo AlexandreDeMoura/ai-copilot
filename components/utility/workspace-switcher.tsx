@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation"
 import { FC, useContext, useEffect, useState } from "react"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
+import { handleCreateFolder } from "../sidebar/sidebar-create-buttons"
 
 interface WorkspaceSwitcherProps {}
 
@@ -24,10 +25,12 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({}) => {
 
   const {
     workspaces,
+    folders,
     workspaceImages,
     selectedWorkspace,
     setSelectedWorkspace,
-    setWorkspaces
+    setWorkspaces,
+    setFolders
   } = useContext(ChatbotUIContext)
 
   const { handleNewChat } = useChatHandler()
@@ -63,6 +66,18 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({}) => {
       name: "New Workspace"
     })
 
+    // Create a "favorite" folder for the new workspace
+    await handleCreateFolder(
+      {
+        user_id: createdWorkspace.user_id,
+        workspace_id: createdWorkspace.id,
+        name: "Favorite",
+        description: "Your favorite items",
+        type: "chats"
+      },
+      setFolders
+    )
+
     setWorkspaces([...workspaces, createdWorkspace])
     setSelectedWorkspace(createdWorkspace)
     setOpen(false)
@@ -78,13 +93,33 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({}) => {
     return workspace.name
   }
 
-  const handleSelect = (workspaceId: string) => {
+  const handleSelect = async (workspaceId: string) => {
     const workspace = workspaces.find(workspace => workspace.id === workspaceId)
 
     if (!workspace) return
 
     setSelectedWorkspace(workspace)
     setOpen(false)
+
+    if (workspace.is_home) {
+      const existingFavoriteFolder = folders.find(
+        folder =>
+          folder.workspace_id === workspace.id && folder.name === "Favorite"
+      )
+
+      if (!existingFavoriteFolder) {
+        await handleCreateFolder(
+          {
+            user_id: workspace.user_id,
+            workspace_id: workspace.id,
+            name: "Favorite",
+            description: "Your favorite items",
+            type: "chats"
+          },
+          setFolders
+        )
+      }
+    }
 
     return router.push(`/${workspace.id}/chat`)
   }

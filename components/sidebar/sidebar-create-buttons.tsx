@@ -18,11 +18,37 @@ interface SidebarCreateButtonsProps {
   hasData: boolean
 }
 
+interface CreateFolderParams {
+  user_id: string
+  workspace_id: string
+  name?: string
+  description?: string
+  type: ContentType
+}
+
+export const handleCreateFolder = async (
+  params: CreateFolderParams,
+  setFolders: React.Dispatch<React.SetStateAction<any[]>>
+) => {
+  const folderParams = {
+    user_id: params.user_id,
+    workspace_id: params.workspace_id,
+    name: params.name || "New Folder",
+    description: params.description || "",
+    type: params.type
+  }
+
+  const createdFolder = await createFolder(folderParams)
+  setFolders(prevFolders => [...prevFolders, createdFolder])
+
+  return createdFolder
+}
+
 export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
   contentType,
   hasData
 }) => {
-  const { profile, selectedWorkspace, folders, setFolders } =
+  const { profile, selectedWorkspace, setFolders } =
     useContext(ChatbotUIContext)
   const { handleNewChat } = useChatHandler()
 
@@ -34,18 +60,18 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
   const [isCreatingTool, setIsCreatingTool] = useState(false)
   const [isCreatingModel, setIsCreatingModel] = useState(false)
 
-  const handleCreateFolder = async () => {
+  const handleCreateFolderClick = async () => {
     if (!profile) return
     if (!selectedWorkspace) return
 
-    const createdFolder = await createFolder({
-      user_id: profile.user_id,
-      workspace_id: selectedWorkspace.id,
-      name: "New Folder",
-      description: "",
-      type: contentType
-    })
-    setFolders([...folders, createdFolder])
+    handleCreateFolder(
+      {
+        user_id: profile.user_id,
+        workspace_id: selectedWorkspace.id,
+        type: contentType
+      },
+      setFolders
+    )
   }
 
   const getCreateFunction = () => {
@@ -105,7 +131,7 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
       </Button>
 
       {hasData && (
-        <Button className="size-[36px] p-1" onClick={handleCreateFolder}>
+        <Button className="size-[36px] p-1" onClick={handleCreateFolderClick}>
           <IconFolderPlus size={20} />
         </Button>
       )}

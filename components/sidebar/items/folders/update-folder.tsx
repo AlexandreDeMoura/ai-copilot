@@ -26,8 +26,17 @@ export const UpdateFolder: FC<UpdateFolderProps> = ({ folder }) => {
 
   const [showFolderDialog, setShowFolderDialog] = useState(false)
   const [name, setName] = useState(folder.name)
+  const [error, setError] = useState("")
+
+  // Check if the folder is editable
+  const isEditable = folder.name !== "Favorite"
 
   const handleUpdateFolder = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (name.trim() === "Favorite") {
+      setError("Folder name 'Favorite' is reserved.")
+      return
+    }
+
     const updatedFolder = await updateFolder(folder.id, {
       name
     })
@@ -36,6 +45,7 @@ export const UpdateFolder: FC<UpdateFolderProps> = ({ folder }) => {
     )
 
     setShowFolderDialog(false)
+    setError("")
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -46,9 +56,11 @@ export const UpdateFolder: FC<UpdateFolderProps> = ({ folder }) => {
 
   return (
     <Dialog open={showFolderDialog} onOpenChange={setShowFolderDialog}>
-      <DialogTrigger asChild>
-        <IconEdit className="hover:opacity-50" size={18} />
-      </DialogTrigger>
+      {isEditable && (
+        <DialogTrigger asChild>
+          <IconEdit className="hover:opacity-50" size={18} />
+        </DialogTrigger>
+      )}
 
       <DialogContent onKeyDown={handleKeyDown}>
         <DialogHeader>
@@ -58,7 +70,14 @@ export const UpdateFolder: FC<UpdateFolderProps> = ({ folder }) => {
         <div className="space-y-1">
           <Label>Name</Label>
 
-          <Input value={name} onChange={e => setName(e.target.value)} />
+          <Input
+            value={name}
+            onChange={e => {
+              setName(e.target.value)
+              setError("")
+            }}
+          />
+          {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
 
         <DialogFooter>
