@@ -1,7 +1,11 @@
 import { cn } from "@/lib/utils"
 import { Tables } from "@/supabase/types"
 import { ContentType } from "@/types"
-import { IconChevronDown, IconChevronRight } from "@tabler/icons-react"
+import {
+  IconChevronDown,
+  IconChevronRight,
+  IconStar
+} from "@tabler/icons-react"
 import { FC, useRef, useState } from "react"
 import { DeleteFolder } from "./delete-folder"
 import { UpdateFolder } from "./update-folder"
@@ -87,7 +91,10 @@ export const Folder: FC<FolderProps> = ({
               <IconChevronRight stroke={3} />
             )}
 
-            <div>{folder.name}</div>
+            <div className="flex items-center space-x-2">
+              {folder.name === "Favorite" && <IconStar size={18} />}
+              <div>{folder.name}</div>
+            </div>
           </div>
 
           {isHovering && (
