@@ -26,10 +26,7 @@ export const SidebarContent: FC<SidebarContentProps> = ({
     // Subtract 50px for the height of the workspace settings
     <div className="flex max-h-[calc(100%-50px)] grow flex-col">
       <div className="mt-2 flex items-center">
-        <SidebarCreateButtons
-          contentType={contentType}
-          hasData={data.length > 0}
-        />
+        <SidebarCreateButtons contentType={contentType} />
       </div>
 
       <div className="mt-2">

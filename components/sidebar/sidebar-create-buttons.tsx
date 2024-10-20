@@ -15,7 +15,6 @@ import { CreateTool } from "./items/tools/create-tool"
 
 interface SidebarCreateButtonsProps {
   contentType: ContentType
-  hasData: boolean
 }
 
 interface CreateFolderParams {
@@ -45,8 +44,7 @@ export const handleCreateFolder = async (
 }
 
 export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
-  contentType,
-  hasData
+  contentType
 }) => {
   const { profile, selectedWorkspace, setFolders } =
     useContext(ChatbotUIContext)
@@ -130,11 +128,9 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
           contentType.slice(1, contentType.length - 1)}
       </Button>
 
-      {hasData && (
-        <Button className="size-[36px] p-1" onClick={handleCreateFolderClick}>
-          <IconFolderPlus size={20} />
-        </Button>
-      )}
+      <Button className="size-[36px] p-1" onClick={handleCreateFolderClick}>
+        <IconFolderPlus size={20} />
+      </Button>
 
       {isCreatingPrompt && (
         <CreatePrompt
